@@ -31,7 +31,7 @@ public class UserInterface {
     /**
      * Returns true if the given class is of the same type as this user interface
      * @param anotherClazz a class to compare this class to
-     * @return true if the given class is of the same type as this iser interface
+     * @return true if the given class is of the same type as this user interface
      */
     public boolean is(Class anotherClazz) {
         return clazz == anotherClazz;

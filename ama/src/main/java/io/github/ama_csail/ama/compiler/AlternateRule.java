@@ -1,7 +1,5 @@
 package io.github.ama_csail.ama.compiler;
 
-import android.app.Activity;
-
 import io.github.ama_csail.ama.util.storage.UserPreferences;
 
 /**
@@ -19,5 +17,14 @@ public interface AlternateRule {
      * @return
      */
     boolean condition(UserInterface userInterface, UserPreferences prefs);
+
+    /**
+     * Returns a new user interface that should be used if <code>condition</code> evaluated
+     * to true.
+     * @param userInterface
+     * @param prefs
+     * @return
+     */
+    UserInterface modify(UserInterface userInterface, UserPreferences prefs);
 
 }

@@ -15,7 +15,7 @@ public class AlternativeUIManager {
 
     private static AlternativeUIManager manager;
 
-    private static AlternativeUIManager getInstance() {
+    public static AlternativeUIManager getInstance() {
         if (manager == null) {
             manager = new AlternativeUIManager();
         }
@@ -33,8 +33,13 @@ public class AlternativeUIManager {
         manager.rules.add(rule);
     }
 
-    public void transform(UserInterface ui, UserPreferences preferences) {
-
+    public static UserInterface transform(UserInterface ui, UserPreferences preferences) {
+        for (AlternateRule rule : manager.rules) {
+            if (rule.condition(ui, preferences)) {
+                return rule.modify(ui, preferences);
+            }
+        }
+        return ui;
     }
 
 }
