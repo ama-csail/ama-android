@@ -6,4 +6,7 @@ package io.github.ama_csail.ama.util.storage;
  * @author Aaron Vontell
  */
 public class UserPreferences {
+
+
+
 }

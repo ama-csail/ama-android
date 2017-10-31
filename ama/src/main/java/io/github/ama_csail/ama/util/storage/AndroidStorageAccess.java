@@ -33,7 +33,7 @@ public class AndroidStorageAccess {
     /**
      * Establishes storage access which is public across this device. This is useful for
      * storing information related to the user or device as a whole.
-     * @param path An application-specific storage manager
+     * @param path A path to a file for reading and writing
      */
     public AndroidStorageAccess(String path) {
         this.path = path;
