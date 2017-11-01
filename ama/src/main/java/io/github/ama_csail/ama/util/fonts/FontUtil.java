@@ -6,6 +6,8 @@ import android.graphics.Typeface;
 import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -113,8 +115,10 @@ public class FontUtil {
                                      @Nullable final Typeface bt,
                                      @Nullable Typeface it) {
 
-        // TODO: Open question - do we really want to invalidate on each TextView? Might be best to
-        //       invalidate only on the original View v used in the first recursive level
+        // TODO: Open q. - do we really want to invalidate on each TextView? Might be best to
+        // TODO            invalidate only on the original View v used in the first recursive level
+
+        // TODO: There is a bug with the bold fonts - a bottom padding / margin is always added. #1
 
         if (v instanceof ViewGroup) {
             ViewGroup vg = (ViewGroup) v;
@@ -130,7 +134,7 @@ public class FontUtil {
             if (original.isBold()) {
                 if (bt != null) {
                     toModify.setTypeface(bt, originalStyle);
-                    toModify.setTextSize(size);
+                    toModify.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
                     toModify.invalidate();
                     return;
                 }
@@ -138,13 +142,15 @@ public class FontUtil {
             else if (original.isItalic()) {
                 if (it != null) {
                     toModify.setTypeface(it, originalStyle);
-                    toModify.setTextSize(size);
+                    toModify.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
                     toModify.invalidate();
                     return;
                 }
             }
-            toModify.setTypeface(rt, originalStyle);
-            toModify.setTextSize(size);
+            if (rt != null) {
+                toModify.setTypeface(rt, originalStyle);
+            }
+            toModify.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
             toModify.invalidate();
         }
 

@@ -88,7 +88,7 @@ public class AccessibleActivity extends AppCompatActivity {
             View container = getRootView();
             AMA.setFont(this, R.raw.opendyslexicregular,
                     R.raw.opendyslexicbold, R.raw.opendyslexicitalic, "OpenDyslexic", container);
-            //AMA.setFontSize(container, 24);
+            //AMA.setFontSize(container, 18);
         }
 
     }

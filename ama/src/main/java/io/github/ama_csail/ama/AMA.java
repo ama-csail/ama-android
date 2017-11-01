@@ -117,7 +117,7 @@ public class AMA {
                                @Nullable Typeface boldTypeface,
                                @Nullable Typeface italicTypeface,
                                View view) {
-        FontUtil.overrideFonts(view, 24, regularTypeface, boldTypeface, italicTypeface);
+        FontUtil.overrideFonts(view, -1, regularTypeface, boldTypeface, italicTypeface);
     }
 
     /**
@@ -176,6 +176,18 @@ public class AMA {
      */
     public static void setFontSize(View view, @Dimension float size) {
         FontUtil.overrideFonts(view, size, null, null, null);
+    }
+
+    public static void increaseWhitespace(@Dimension int amount, View ... views) {
+
+        for (View v : views) {
+            int top = v.getPaddingTop();
+            int bot = v.getPaddingBottom();
+            int lef = v.getPaddingLeft();
+            int rig = v.getPaddingRight();
+            v.setPadding(lef + amount, top + amount, rig + amount, bot + amount );
+        }
+
     }
 
 }
