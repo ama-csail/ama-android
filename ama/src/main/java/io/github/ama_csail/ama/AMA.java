@@ -25,6 +25,7 @@ import io.github.ama_csail.ama.util.fonts.FontUtil;
 import io.github.ama_csail.ama.util.storage.SystemConfig;
 import io.github.ama_csail.ama.util.views.ViewHelper;
 
+import static android.R.attr.padding;
 import static android.content.Context.ACCESSIBILITY_SERVICE;
 
 /**
@@ -220,6 +221,28 @@ public class AMA {
     }
 
     /**
+     * Sets the minimum amount of padding for all given views to a certain amount (left, right, top,
+     * and bottom)
+     * @param minimum The amount (in pixels) which is the minimum amount of padding
+     * @param views Any number of views that one wishes to set the minimum the padding around
+     */
+    public static void setMinimumPadding(int minimum, View ... views) {
+
+        for (View v : views) {
+            int top = v.getPaddingTop();
+            int bot = v.getPaddingBottom();
+            int lef = v.getPaddingLeft();
+            int rig = v.getPaddingRight();
+            top = top < minimum ? minimum : top;
+            bot = bot < minimum ? minimum : bot;
+            rig = rig < minimum ? minimum : rig;
+            lef = lef < minimum ? minimum : lef;
+            v.setPadding(lef, top, rig, bot);
+        }
+
+    }
+
+    /**
      * Assesses whether the given colors satisfy the given ratio specification
      * Uses resources from W3 in calculations, especially from the following links:
      * https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
@@ -395,6 +418,5 @@ public class AMA {
         Object rawResult = view.getTag(R.id.AMA_view_action_class);
         return rawResult != null ? (ActionClass) rawResult : ActionClass.UNSET;
     }
-
 
 }
