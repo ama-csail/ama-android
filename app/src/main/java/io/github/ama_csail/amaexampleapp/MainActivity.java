@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.ama_csail.ama.AMA;
 import io.github.ama_csail.ama.AccessibleActivity;
 import io.github.ama_csail.amaexampleapp.news.Article;
 import io.github.ama_csail.amaexampleapp.news.NewsApi;
@@ -42,6 +40,8 @@ public class MainActivity extends AccessibleActivity {
         //enableDyslexiaFont(true);
         //provideGlossary(AccessibleDefinitions.getGlossary());
         //AMA.increaseFontSize(getRootView(), 30);
+        //AMA.setActionClass(newsLayout, ActionClass.DANGER);
+        //Log.e("ACTION", AMA.getActionClass(newsLayout).toString());
 
     }
 

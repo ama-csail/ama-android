@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import io.github.ama_csail.ama.util.ActionClass;
 import io.github.ama_csail.ama.util.Contrast;
 import io.github.ama_csail.ama.util.fonts.FontUtil;
 import io.github.ama_csail.ama.util.storage.SystemConfig;
@@ -319,5 +320,81 @@ public class AMA {
         return luminance;
 
     }
+
+    /**
+     * Specifies that the given view may have components that are navigated using speech, as
+     * indicated by the given boolean
+     * @param view The view to tag with speech navigation usage
+     * @param speechNavigated true if this view uses speech navigation, false otherwise
+     */
+    public static void setIsSpeechNavigationUsed(View view, boolean speechNavigated) {
+        view.setTag(R.id.AMA_view_uses_speech_navigation, speechNavigated);
+    }
+
+    /**
+     * Returns true if this view has been marked as being navigated by speech, and false
+     * otherwise.
+     * @param view The view to check for speech navigation
+     * @return True if marked as true using <code>setIsSpeechNavigationUsed(view, bool)</code>
+     */
+    public static boolean isSpeechNavigationUsed(View view) {
+        Object rawResult = view.getTag(R.id.AMA_view_uses_speech_navigation);
+        return rawResult != null && (boolean) rawResult;
+    }
+
+    /**
+     * Attaches an object to a View, which can be used in accessibility helpers for contextual
+     * information
+     * @param view The view to tag with a help object
+     * @param helper The Object which contains help information
+     */
+    public static void setHelpObject(View view, Object helper) {
+        view.setTag(R.id.AMA_view_help_message, helper);
+    }
+
+    /**
+     * Clears any helper object attached to the given view
+     * @param view The view to clear of any help object
+     */
+    public static void clearHelpObject(View view) {
+        view.setTag(R.id.AMA_view_help_message, null);
+    }
+
+    /**
+     * Returns any helper object that has been attached to the given View.
+     * @param view The view to check for a helper object
+     * @return The helper object which has been previously attached with <code>setHelpObject</code>
+     */
+    public static Object getHelpObject(View view) {
+        return view.getTag(R.id.AMA_view_help_message);
+    }
+
+    /**
+     * Attaches an action class to an object, which can help in identifying connotations of a view
+     * @param view The view to tag with an action class
+     * @param action The action class to use
+     */
+    public static void setActionClass(View view, ActionClass action) {
+        view.setTag(R.id.AMA_view_action_class, action);
+    }
+
+    /**
+     * Clears any action class that was set to this object (i.e. becomes UNSET)
+     * @param view The view to clear of any action class
+     */
+    public static void clearActionClass(View view) {
+        view.setTag(R.id.AMA_view_action_class, ActionClass.UNSET);
+    }
+
+    /**
+     * Returns the action class of this view, or UNSET if never defined
+     * @param view The view to obtain the action class of
+     * @return The action class which has been previously attached with <code>setActionClass</code>
+     */
+    public static ActionClass getActionClass(View view) {
+        Object rawResult = view.getTag(R.id.AMA_view_action_class);
+        return rawResult != null ? (ActionClass) rawResult : ActionClass.UNSET;
+    }
+
 
 }
