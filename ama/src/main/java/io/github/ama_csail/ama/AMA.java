@@ -11,6 +11,7 @@ import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import io.github.ama_csail.ama.util.fonts.FontUtil;
 import io.github.ama_csail.ama.util.storage.SystemConfig;
+import io.github.ama_csail.ama.util.views.ViewHelper;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
 
@@ -27,6 +29,8 @@ import static android.content.Context.ACCESSIBILITY_SERVICE;
  * @author Aaron Vontell
  */
 public class AMA {
+
+    // TODO: When we talk about dimensions, what do we mean?
 
     //section Constants
 
@@ -178,6 +182,28 @@ public class AMA {
         FontUtil.overrideFonts(view, size, null, null, null);
     }
 
+    /**
+     * Increases the font size of each TextView contained with the given view by the given number
+     * of pixels
+     * @param view The View (or ViewGroup) to change font size within
+     * @param amount The amount to increase each font by
+     */
+    public static void increaseFontSize(View view, float amount) {
+
+        List<TextView> textViews = ViewHelper.getAllTextViews(view);
+        for (TextView tv : textViews) {
+            float pixelSize = tv.getTextSize();
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, pixelSize + amount);
+        }
+
+    }
+
+    /**
+     * Increases the white space around each view by the desired amount (left, right, top, and
+     * bottom)
+     * @param amount The amount (in pixels) to increase the padding around each view
+     * @param views Any number of views that one wishes to increase the padding around
+     */
     public static void increaseWhitespace(@Dimension int amount, View ... views) {
 
         for (View v : views) {
