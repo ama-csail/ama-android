@@ -3,6 +3,7 @@ package io.github.ama_csail.amaexampleapp;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,7 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.ama_csail.ama.AMA;
 import io.github.ama_csail.ama.AccessibleActivity;
+import io.github.ama_csail.ama.menu.OnAccessibleMenuConnectedListener;
 import io.github.ama_csail.amaexampleapp.news.Article;
 import io.github.ama_csail.amaexampleapp.news.NewsApi;
 
@@ -36,12 +39,18 @@ public class MainActivity extends AccessibleActivity {
 
     protected void configureAccessibility() {
 
-        //enableMenu();
+        enableMenu();
         //enableDyslexiaFont(true);
-        //provideGlossary(AccessibleDefinitions.getGlossary());
-        //AMA.increaseFontSize(getRootView(), 30);
+        AMA.increaseFontSize(getRootView(), 30);
         //AMA.setActionClass(newsLayout, ActionClass.DANGER);
         //Log.e("ACTION", AMA.getActionClass(newsLayout).toString());
+
+        setOnAccessibleMenuConnectedListener(new OnAccessibleMenuConnectedListener() {
+            @Override
+            public void configureMenu() {
+                provideGlossary(AccessibleDefinitions.getGlossary());
+            }
+        });
 
     }
 
@@ -49,8 +58,12 @@ public class MainActivity extends AccessibleActivity {
 
         public static Map<String, String> getGlossary() {
             Map<String, String> terms = new HashMap<>();
-            terms.put("accessible", "To be usable in different contexts, no matter the operator");
-            terms.put("glossary", "A list of terms and definitions");
+            terms.put("Accessible", "To be usable in different contexts, no matter the operator");
+            terms.put("Glossary", "A list of terms and definitions");
+            terms.put("Ars Technica", "A news source with articles about computer, technology, start-ups, and more.");
+            terms.put("MIT", "An institute in Cambridge, MA which is renowned for it's incredible work in mobile accessibility, among other topics.");
+            terms.put("AMA", "A project created to address the issues with mobile accessibility.");
+            terms.put("Term", "This is just another term that I came up with");
             return terms;
         }
 

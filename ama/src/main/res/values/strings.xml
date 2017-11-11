@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AMA</string>
+
+    <!-- Strings for modules -->
+    <string name="glossary_title">Glossary</string>
+
 </resources>

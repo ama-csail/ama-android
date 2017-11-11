@@ -1,4 +1,4 @@
-package io.github.ama_csail.ama.menu.backend;
+package io.github.ama_csail.ama.menu;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
