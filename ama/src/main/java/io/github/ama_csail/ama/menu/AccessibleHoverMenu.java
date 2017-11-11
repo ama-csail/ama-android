@@ -12,11 +12,10 @@ import java.util.Map;
 import io.github.ama_csail.ama.menu.modules.GlossaryModule;
 import io.github.ama_csail.ama.menu.modules.MenuModuleType;
 import io.github.ama_csail.ama.menu.modules.ModuleLoader;
-import io.mattcarroll.hover.Content;
 import io.mattcarroll.hover.HoverMenu;
 
 /**
- * The action menu view to be displayed for the accessible menu.
+ * The hover menu view to be displayed for the accessible menu.
  * @author Aaron Vontell
  */
 public class AccessibleHoverMenu extends HoverMenu {
@@ -34,6 +33,10 @@ public class AccessibleHoverMenu extends HoverMenu {
     private Map<MenuModuleType, Section> typeMap; // TODO: Use just the map and no List of modules, but I need to figure out the index step
     private Context context;
 
+    /**
+     * Creates an accessible hover menu given a context.
+     * @param context The calling context, such as the accessible hover menu service
+     */
     protected AccessibleHoverMenu(Context context) {
         this.identifiers = new LinkedList<>();
         this.modules = new LinkedList<>();
@@ -41,6 +44,11 @@ public class AccessibleHoverMenu extends HoverMenu {
         this.context = context;
     }
 
+    /**
+     * Registers the given menu module type by creating the appropriate section and adding it
+     * to the internal model. This allows us to use modules only when we need them.
+     * @param type The MenuModuleType to activate, such as GLOSSARY or HOME
+     */
     protected void registerModule(MenuModuleType type) {
 
         Section section = ModuleLoader.getModule(this.context, type);
@@ -49,7 +57,12 @@ public class AccessibleHoverMenu extends HoverMenu {
         typeMap.put(type, section);
     }
 
-    private void refreshSections() {
+    /**
+     * Refreshes all modules within the hover menu, by calling their respective refreshContents().
+     * This method is why it is extremely important for individual modules to keep track of when
+     * they need to actually refresh through the use of dirty trackers.
+     */
+    private void refreshModules() {
 
         for(Section section : modules) {
             // Note: If your code fails on this line below, it most likely means
@@ -98,10 +111,33 @@ public class AccessibleHoverMenu extends HoverMenu {
     //      refresh when done
     // ---------------------------------------------------------------------------------------------
 
+    /**
+     * Provides a glossary to the glossary module, refreshing the contents in the process
+     * @param glossary The new mapping of terms to definitions to display
+     */
     public void provideGlossary(Map<String, String> glossary) {
         GlossaryModule mod = (GlossaryModule) typeMap.get(MenuModuleType.GLOSSARY).getContent();
         mod.setGlossary(glossary);
-        refreshSections();
+        refreshModules();
+    }
+
+    /**
+     * Clears the glossary module, refreshing the contents in the process
+     */
+    public void clearGlossary() {
+        GlossaryModule mod = (GlossaryModule) typeMap.get(MenuModuleType.GLOSSARY).getContent();
+        mod.clearGlossary();
+        refreshModules();
+    }
+
+    /**
+     * Adds more terms to any existing glossary, refreshing the contents in the process
+     * @param glossary The additional mapping of terms to definitions to display
+     */
+    public void addGlossary(Map<String, String> glossary) {
+        GlossaryModule mod = (GlossaryModule) typeMap.get(MenuModuleType.GLOSSARY).getContent();
+        mod.putGlossary(glossary);
+        refreshModules();
     }
 
 }

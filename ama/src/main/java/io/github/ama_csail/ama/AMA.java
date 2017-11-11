@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.ColorRes;
-import android.support.annotation.DimenRes;
 import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,7 +24,6 @@ import io.github.ama_csail.ama.util.fonts.FontUtil;
 import io.github.ama_csail.ama.util.storage.SystemConfig;
 import io.github.ama_csail.ama.util.views.ViewHelper;
 
-import static android.R.attr.padding;
 import static android.content.Context.ACCESSIBILITY_SERVICE;
 
 /**

@@ -3,26 +3,15 @@ package io.github.ama_csail.ama.menu.modules;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import io.github.ama_csail.ama.R;
-import io.github.ama_csail.ama.menu.MenuHelper;
 import io.github.ama_csail.ama.menu.MenuModule;
 import io.mattcarroll.hover.Content;
-import io.mattcarroll.hover.HoverMenu;
-import io.mattcarroll.hover.HoverMenu.SectionId;
 
 /**
  * The section / module representing the glossary for the accessibility menu.
@@ -36,6 +25,13 @@ public class GlossaryModule implements Content, MenuModule {
     private LinearLayout glossaryList;
     private int layoutRes;
 
+    /**
+     * Creates the glossary module for showing terms and definitions within the accessibility hover
+     * menu
+     * @param context The calling context (i.e. the accessible hover service)
+     * @param pageTitle The title to show for the hover menu
+     * @param layoutRes The content resource for this module
+     */
     public GlossaryModule(@NonNull Context context, @NonNull String pageTitle, @LayoutRes int layoutRes) {
         this.context = context.getApplicationContext();
         this.title = pageTitle;
@@ -53,6 +49,10 @@ public class GlossaryModule implements Content, MenuModule {
 
     // Some important methods for startup and configuration
 
+    /**
+     * Creates the view to be loaded into the hover menu
+     * @return the view to be loaded into the hover menu
+     */
     private LinearLayout createScreenView() {
 
         LinearLayout glossaryView = (LinearLayout) LayoutInflater
@@ -66,6 +66,10 @@ public class GlossaryModule implements Content, MenuModule {
         return glossaryView;
     }
 
+    /**
+     * Clears and displays the glossary within the hover menu. This should only be called if
+     * the glossary model has actually changed since the last call of showGlossary()
+     */
     private void showGlossary() {
 
         // TODO: Sort the glossary by term

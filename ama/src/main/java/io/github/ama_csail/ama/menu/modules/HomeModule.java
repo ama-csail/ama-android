@@ -22,6 +22,12 @@ public class HomeModule implements Content, MenuModule{
     private LinearLayout moduleView;
     private int layoutRes;
 
+    /**
+     * Creates the home module for showing basic information and links to other accessible services
+     * @param context The calling context (i.e. the accessible hover service)
+     * @param pageTitle The title to show for the hover menu
+     * @param layoutRes The content resource for this module
+     */
     public HomeModule(@NonNull Context context, @NonNull String pageTitle, @LayoutRes int layoutRes) {
         this.context = context.getApplicationContext();
         this.title = pageTitle;
@@ -29,6 +35,10 @@ public class HomeModule implements Content, MenuModule{
         this.moduleView = createScreenView();
     }
 
+    /**
+     * Creates the view to be loaded into the hover menu
+     * @return the view to be loaded into the hover menu
+     */
     private LinearLayout createScreenView() {
 
         LinearLayout homeView = (LinearLayout) LayoutInflater

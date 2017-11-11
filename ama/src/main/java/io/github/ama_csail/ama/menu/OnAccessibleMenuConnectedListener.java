@@ -1,7 +1,9 @@
 package io.github.ama_csail.ama.menu;
 
 /**
- * Created by vontell on 11/11/17.
+ * A listener to be implemented within an accessible activity which is called when the accessibility
+ * menu is ready to begin receiving model changes and configurations.
+ * @author Aaron Vontell
  */
 public interface OnAccessibleMenuConnectedListener {
 

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * A collection of utilities for various view modifications, adjustments, etc...
+ * A collection of utilities for various view modifications and adjustments
  * @author Aaron Vontell
  */
 public class ViewHelper {

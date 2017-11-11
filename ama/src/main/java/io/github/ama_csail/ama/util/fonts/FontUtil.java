@@ -6,7 +6,6 @@ import android.graphics.Typeface;
 import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;

@@ -16,7 +16,8 @@ import io.github.ama_csail.ama.menu.OnAccessibleMenuConnectedListener;
 import io.mattcarroll.hover.overlay.OverlayPermission;
 
 /**
- * An accessible version of and Android activity.
+ * An accessible version of an Android activity (compatible version).
+ * @author Aaron Vontell
  */
 public class AccessibleActivity extends AppCompatActivity {
 
@@ -83,11 +84,18 @@ public class AccessibleActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Attaches a listener which gets called when the accessible menu is enabled and a connection
+     * is established.
+     * @param listener
+     */
     public void setOnAccessibleMenuConnectedListener(OnAccessibleMenuConnectedListener listener) {
         this.menuConnectedListener = listener;
     }
 
-    /** Defines callbacks for service binding, passed to bindService() */
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
     private ServiceConnection menuConnection = new ServiceConnection() {
 
         @Override
@@ -113,29 +121,57 @@ public class AccessibleActivity extends AppCompatActivity {
     };
 
     /**
+     * Throws an exception if the menu is not yet enabled.
+     */
+    private void checkMenu() {
+        if (!menuBound) {
+            throw new RuntimeException("Menu is not yet started. Please start it with enableMenu()");
+        }
+    }
+
+    /**
      * Provide a glossary (or mapping of terms to definitions) to the menu, which will be
      * displayed within the Information section. Throws an error if the menu has not been enabled
      * with enableMenu()
      * @param glossary The mapping of terms (as keys) to definitions (as values)
      */
     public void provideGlossary(Map<String, String> glossary) {
-
-        Log.e("MENU", "Glossary being provided, menuBound is " + menuBound);
-        if (menuBound) {
-            menuService.provideGlossary(glossary);
-        } else {
-            throw new RuntimeException("Menu is not yet started. Please start it with enableMenu()");
-        }
-
+        checkMenu();
+        menuService.provideGlossary(glossary);
     }
 
+    /**
+     * Add more entries (or mapping of terms to definitions) to the glossary with the menu, which
+     * will be displayed within the Information section. Throws an error if the menu has not been
+     * enabled with enableMenu()
+     * @param glossary The additional mapping of terms (as keys) to definitions (as values)
+     */
+    public void addToGlossary(Map<String, String> glossary) {
+        checkMenu();
+        menuService.addGlossary(glossary);
+    }
+
+    /**
+     * Clears all terms and definitions from the glossary within the accessible menu
+     */
+    public void clearGlossary() {
+        checkMenu();
+        menuService.clearGlossary();
+    }
+
+    /**
+     * Disables the menu, barring the user from seeing and interacting with it
+     */
     public void disabledMenu() {
         throw new RuntimeException("Not yet implemented!");
     }
 
-
     // Vision-based helper methods
 
+    /**
+     * Replaces all fonts within the main content with the OpenDyslexic font
+     * @param enabled True if OpenDyslexic should be used
+     */
     public void enableDyslexiaFont(boolean enabled) {
 
         // TODO: Caching to restore old font
@@ -144,6 +180,8 @@ public class AccessibleActivity extends AppCompatActivity {
             AMA.setFont(this, R.raw.opendyslexicregular,
                     R.raw.opendyslexicbold, R.raw.opendyslexicitalic, "OpenDyslexic", container);
             //AMA.setFontSize(container, 18);
+        } else {
+            throw new RuntimeException("Not yet implemented!");
         }
 
     }

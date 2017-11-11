@@ -37,6 +37,10 @@ public class AccessibleHoverMenuService extends HoverMenuService {
         Log.e("MENU", "Menu started");
     }
 
+    /**
+     * Registers / creates a module, if that module is not already started
+     * @param type The MenuModuleType to start, such as GLOSSARY or HOME
+     */
     private void possiblyRegisterModule(MenuModuleType type) {
         if (!registeredModules.contains(type)) {
             menu.registerModule(type);
@@ -44,13 +48,30 @@ public class AccessibleHoverMenuService extends HoverMenuService {
         }
     }
 
-
+    /**
+     * Provides a glossary to the glossary module, refreshing the contents in the process
+     * @param glossary The new mapping of terms to definitions to display
+     */
     public void provideGlossary(Map<String, String> glossary) {
-
-        Log.e("MENU", "Menu has received a new glossary. Registering module");
         possiblyRegisterModule(MenuModuleType.GLOSSARY);
         menu.provideGlossary(glossary);
+    }
 
+    /**
+     * Starts clearing the glossary module
+     */
+    public void clearGlossary() {
+        possiblyRegisterModule(MenuModuleType.GLOSSARY);
+        menu.clearGlossary();
+    }
+
+    /**
+     * Adds more terms to any existing glossary
+     * @param glossary The additional mapping of terms to definitions to display
+     */
+    public void addGlossary(Map<String, String> glossary) {
+        possiblyRegisterModule(MenuModuleType.GLOSSARY);
+        menu.addGlossary(glossary);
     }
 
     /**

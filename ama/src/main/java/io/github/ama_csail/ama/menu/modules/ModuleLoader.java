@@ -2,7 +2,6 @@ package io.github.ama_csail.ama.menu.modules;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
 import android.widget.ImageView;
 
 import io.github.ama_csail.ama.R;
@@ -16,7 +15,12 @@ import io.mattcarroll.hover.HoverMenu;
  */
 public class ModuleLoader {
 
-    public static HoverMenu.Section getHomeModule(Context context) {
+    /**
+     * Creates and returns the home menu module.
+     * @param context The calling context, such as the accessible hover menu service
+     * @return the home menu module
+     */
+    private static HoverMenu.Section getHomeModule(Context context) {
 
         final String IDENTIFIER = "AMAHome";
         final String TITLE = "Home";
@@ -29,7 +33,12 @@ public class ModuleLoader {
 
     }
 
-    public static HoverMenu.Section getGlossaryModule(Context context) {
+    /**
+     * Creates and returns the glossary menu module.
+     * @param context The calling context, such as the accessible hover menu service
+     * @return the glossary menu module
+     */
+    private static HoverMenu.Section getGlossaryModule(Context context) {
 
         final String IDENTIFIER = "AMAGlossary";
         final String TITLE = "Glossary";
@@ -42,6 +51,15 @@ public class ModuleLoader {
 
     }
 
+    /**
+     * Useful helper function to create sections (i.e. entire hover menu components) from various
+     * properties.
+     * @param context The calling context, such as the accessible hover menu service
+     * @param identifier A unique identifier for this section
+     * @param iconRes The drawable resource to use as an icon for this section
+     * @param module The content to load into this section
+     * @return the constructed section
+     */
     private static HoverMenu.Section createSection(Context context, String identifier,
                                                    @DrawableRes int iconRes, Content module) {
 
@@ -51,6 +69,12 @@ public class ModuleLoader {
 
     }
 
+    /**
+     * Creates an entire module given the calling service context and a type of module to load.
+     * @param context The calling context, such as the accessible hover menu service
+     * @param type The MenuModuleType to load, such as GLOSSARY or HOME
+     * @return the resulting section which can be loaded into the HoverMenu
+     */
     public static HoverMenu.Section getModule(Context context, MenuModuleType type) {
         switch (type) {
             case GLOSSARY:
@@ -62,6 +86,9 @@ public class ModuleLoader {
         }
     }
 
+    /**
+     * This class should only be interacted with through the <code>getModule()</code> method.
+     */
     private ModuleLoader() {}
 
 }
