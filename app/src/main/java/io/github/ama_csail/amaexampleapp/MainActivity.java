@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,12 +20,14 @@ import java.util.Map;
 import io.github.ama_csail.ama.AMA;
 import io.github.ama_csail.ama.AccessibleActivity;
 import io.github.ama_csail.ama.menu.OnAccessibleMenuConnectedListener;
+import io.github.ama_csail.ama.menu.OnInstructionsLoadedListener;
 import io.github.ama_csail.amaexampleapp.news.Article;
 import io.github.ama_csail.amaexampleapp.news.NewsApi;
 
 public class MainActivity extends AccessibleActivity {
 
     private LinearLayout newsLayout;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class MainActivity extends AccessibleActivity {
         newsLayout = (LinearLayout) findViewById(R.id.news_layout);
 
         new NewsApiTask().execute(this);
+
+        context = this;
 
     }
 
@@ -48,12 +53,28 @@ public class MainActivity extends AccessibleActivity {
         setOnAccessibleMenuConnectedListener(new OnAccessibleMenuConnectedListener() {
             @Override
             public void configureMenu() {
+
+                // Create a glossary relevant to the information on the page
                 provideGlossary(AccessibleDefinitions.getGlossary());
+
+                // Create a process for loading instructions to be displayed to the user
+                setOnInstructionsLoadedListener(null, new OnInstructionsLoadedListener() {
+                    @Override
+                    public void onInstructionsLoaded(ViewGroup parent, Object config) {
+                        parent.removeAllViews();
+                        LayoutInflater.from(context)
+                                .inflate(R.layout.main_instruction_layout, parent);
+                    }
+                });
             }
         });
 
     }
 
+    /**
+     * A collection of static variables which are used as configurations in the accessibility
+     * process
+     */
     public static class AccessibleDefinitions {
 
         public static Map<String, String> getGlossary() {

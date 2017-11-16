@@ -3,5 +3,7 @@
 
     <!-- Strings for modules -->
     <string name="glossary_title">Glossary</string>
+    <string name="instructions_title">Instructions</string>
+    <string name="instructions_default">No instructions or extra content available</string>
 
 </resources>

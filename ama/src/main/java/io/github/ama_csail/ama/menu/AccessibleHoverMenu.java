@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.ama_csail.ama.menu.modules.GlossaryModule;
+import io.github.ama_csail.ama.menu.modules.InstructionsModule;
 import io.github.ama_csail.ama.menu.modules.MenuModuleType;
 import io.github.ama_csail.ama.menu.modules.ModuleLoader;
 import io.mattcarroll.hover.HoverMenu;
@@ -137,6 +138,19 @@ public class AccessibleHoverMenu extends HoverMenu {
     public void addGlossary(Map<String, String> glossary) {
         GlossaryModule mod = (GlossaryModule) typeMap.get(MenuModuleType.GLOSSARY).getContent();
         mod.putGlossary(glossary);
+        refreshModules();
+    }
+
+    /**
+     * Sets a listener to call when an instruction is attempted to be loaded. Also takes in an
+     * object that will be passed during calls as a means to config the instruction module
+     * @param config An object that will be passed to the onInstructionsLoaded call (may be null)
+     * @param listener The listener with onInstructionsLoaded to be called during a load
+     */
+    public void setOnInstructionsLoadedListener(@Nullable Object config,
+                                                @Nullable OnInstructionsLoadedListener listener) {
+        InstructionsModule mod = (InstructionsModule) typeMap.get(MenuModuleType.INSTRUCTIONS).getContent();
+        mod.setOnInstructionsLoadedListener(config, listener);
         refreshModules();
     }
 

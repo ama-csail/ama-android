@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.HashSet;
@@ -72,6 +73,18 @@ public class AccessibleHoverMenuService extends HoverMenuService {
     public void addGlossary(Map<String, String> glossary) {
         possiblyRegisterModule(MenuModuleType.GLOSSARY);
         menu.addGlossary(glossary);
+    }
+
+    /**
+     * Sets a listener to call when an instruction is attempted to be loaded. Also takes in an
+     * object that will be passed during calls as a means to config the instruction module
+     * @param config An object that will be passed to the onInstructionsLoaded call (may be null)
+     * @param listener The listener with onInstructionsLoaded to be called during a load
+     */
+    public void setOnInstructionsLoadedListener(@Nullable Object config,
+                                                @Nullable OnInstructionsLoadedListener listener) {
+        possiblyRegisterModule(MenuModuleType.INSTRUCTIONS);
+        menu.setOnInstructionsLoadedListener(config, listener);
     }
 
     /**

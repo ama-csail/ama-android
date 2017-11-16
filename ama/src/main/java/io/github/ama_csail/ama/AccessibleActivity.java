@@ -12,6 +12,7 @@ import android.view.View;
 import java.util.Map;
 
 import io.github.ama_csail.ama.menu.AccessibleHoverMenuService;
+import io.github.ama_csail.ama.menu.OnInstructionsLoadedListener;
 import io.github.ama_csail.ama.menu.OnAccessibleMenuConnectedListener;
 import io.mattcarroll.hover.overlay.OverlayPermission;
 
@@ -184,6 +185,18 @@ public class AccessibleActivity extends AppCompatActivity {
             throw new RuntimeException("Not yet implemented!");
         }
 
+    }
+
+    /**
+     * Sets a listener to call when an instruction is attempted to be loaded. Also takes in an
+     * object that will be passed during calls as a means to config the instruction module
+     * @param config An object that will be passed to the onInstructionsLoaded call (may be null)
+     * @param listener The listener with onInstructionsLoaded to be called during a load
+     */
+    public void setOnInstructionsLoadedListener(Object config,
+                                                OnInstructionsLoadedListener listener) {
+        checkMenu();
+        menuService.setOnInstructionsLoadedListener(config, listener);
     }
 
 }

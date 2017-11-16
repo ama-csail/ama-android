@@ -6,6 +6,6 @@ package io.github.ama_csail.ama.menu.modules;
  */
 public enum MenuModuleType {
 
-    HOME, GLOSSARY
+    HOME, GLOSSARY, INSTRUCTIONS
 
 }

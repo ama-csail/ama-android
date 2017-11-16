@@ -52,6 +52,24 @@ public class ModuleLoader {
     }
 
     /**
+     * Creates and returns the instructions menu module.
+     * @param context The calling context, such as the accessible hover menu service
+     * @return the instructions menu module
+     */
+    private static HoverMenu.Section getInstructionsModule(Context context) {
+
+        final String IDENTIFIER = "AMAInstructions";
+        final String TITLE = "Instructions";
+        final int ICON_RESOURCE = R.drawable.ama;
+        final int LAYOUT_RESOURCE = R.layout.instruction_module;
+
+        Content glossary = new InstructionsModule(context, TITLE, LAYOUT_RESOURCE);
+
+        return createSection(context, IDENTIFIER, ICON_RESOURCE, glossary);
+
+    }
+
+    /**
      * Useful helper function to create sections (i.e. entire hover menu components) from various
      * properties.
      * @param context The calling context, such as the accessible hover menu service
@@ -81,6 +99,8 @@ public class ModuleLoader {
                 return getGlossaryModule(context);
             case HOME:
                 return getHomeModule(context);
+            case INSTRUCTIONS:
+                return getInstructionsModule(context);
             default:
                 throw new RuntimeException("Module type is not a valid module.");
         }
