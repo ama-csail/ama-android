@@ -15,7 +15,7 @@ import io.mattcarroll.hover.Content;
  * handle the case where no modules are presented, in which case there is a bug.
  * @author Aaron Vontell
  */
-public class HomeModule implements Content, MenuModule{
+public class HomeModule implements Content, MenuModule {
 
     private Context context;
     private String title;

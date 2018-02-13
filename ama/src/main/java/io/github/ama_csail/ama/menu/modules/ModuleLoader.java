@@ -70,6 +70,24 @@ public class ModuleLoader {
     }
 
     /**
+     * Creates and returns the language menu module.
+     * @param context The calling context, such as the accessible hover menu service
+     * @return the language menu module
+     */
+    private static HoverMenu.Section getLanguageModule(Context context) {
+
+        final String IDENTIFIER = "AMALanguageOptions";
+        final String TITLE = "Language Options";
+        final int ICON_RESOURCE = R.drawable.ama;
+        final int LAYOUT_RESOURCE = R.layout.language_module;
+
+        Content glossary = new LanguageModule(context, TITLE, LAYOUT_RESOURCE);
+
+        return createSection(context, IDENTIFIER, ICON_RESOURCE, glossary);
+
+    }
+
+    /**
      * Useful helper function to create sections (i.e. entire hover menu components) from various
      * properties.
      * @param context The calling context, such as the accessible hover menu service
@@ -101,6 +119,8 @@ public class ModuleLoader {
                 return getHomeModule(context);
             case INSTRUCTIONS:
                 return getInstructionsModule(context);
+            case LANGUAGE:
+                return getLanguageModule(context);
             default:
                 throw new RuntimeException("Module type is not a valid module.");
         }

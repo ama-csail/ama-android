@@ -170,6 +170,15 @@ public class AccessibleActivity extends AppCompatActivity {
     // Vision-based helper methods
 
     /**
+     * Enables language settings within the accessible menu, which provides font resizing, dyslexic
+     * font toggle, and more language options.
+     */
+    public void enableLanguageSettings() {
+        checkMenu();
+        menuService.enableLanguageSettings(getRootView());
+    }
+
+    /**
      * Replaces all fonts within the main content with the OpenDyslexic font
      * @param enabled True if OpenDyslexic should be used
      */

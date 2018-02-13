@@ -3,6 +3,7 @@ package io.github.ama_csail.ama.menu;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import io.github.ama_csail.ama.menu.modules.GlossaryModule;
 import io.github.ama_csail.ama.menu.modules.InstructionsModule;
+import io.github.ama_csail.ama.menu.modules.LanguageModule;
 import io.github.ama_csail.ama.menu.modules.MenuModuleType;
 import io.github.ama_csail.ama.menu.modules.ModuleLoader;
 import io.mattcarroll.hover.HoverMenu;
@@ -151,6 +153,16 @@ public class AccessibleHoverMenu extends HoverMenu {
                                                 @Nullable OnInstructionsLoadedListener listener) {
         InstructionsModule mod = (InstructionsModule) typeMap.get(MenuModuleType.INSTRUCTIONS).getContent();
         mod.setOnInstructionsLoadedListener(config, listener);
+        refreshModules();
+    }
+
+    /**
+     * Enables the language settings by providing a View which it can modify the text of
+     * @param rootView The View that the language settings are allowed to interact with
+     */
+    public void enableLanguageSettings(View rootView) {
+        LanguageModule mod = (LanguageModule) typeMap.get(MenuModuleType.LANGUAGE).getContent();
+        mod.setRootView(rootView);
         refreshModules();
     }
 

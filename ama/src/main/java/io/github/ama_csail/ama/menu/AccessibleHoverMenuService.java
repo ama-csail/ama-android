@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -85,6 +86,16 @@ public class AccessibleHoverMenuService extends HoverMenuService {
                                                 @Nullable OnInstructionsLoadedListener listener) {
         possiblyRegisterModule(MenuModuleType.INSTRUCTIONS);
         menu.setOnInstructionsLoadedListener(config, listener);
+    }
+
+    /**
+     * Enables language settings, which allows the user to enable the dyslexic font, change text
+     * padding, and text size.
+     * @param rootView The view which the module can change text of
+     */
+    public void enableLanguageSettings(View rootView) {
+        possiblyRegisterModule(MenuModuleType.LANGUAGE);
+        menu.enableLanguageSettings(rootView);
     }
 
     /**

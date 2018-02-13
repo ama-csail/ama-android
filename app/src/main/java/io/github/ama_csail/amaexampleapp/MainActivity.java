@@ -40,13 +40,16 @@ public class MainActivity extends AccessibleActivity {
 
         context = this;
 
+        String test = "this is a lint test";
+
+
     }
 
     protected void configureAccessibility() {
 
         enableMenu();
         //enableDyslexiaFont(true);
-        AMA.increaseFontSize(getRootView(), 30);
+        //AMA.increaseFontSize(getRootView(), 30);
         //AMA.setActionClass(newsLayout, ActionClass.DANGER);
         //Log.e("ACTION", AMA.getActionClass(newsLayout).toString());
 
@@ -66,6 +69,8 @@ public class MainActivity extends AccessibleActivity {
                                 .inflate(R.layout.main_instruction_layout, parent);
                     }
                 });
+
+                enableLanguageSettings();
             }
         });
 
