@@ -9,6 +9,8 @@ import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UClassLiteralExpression;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.ULiteralExpression;
 import org.jetbrains.uast.UastLiteralUtils;
@@ -36,7 +38,7 @@ public class AMACodeDetector extends Detector implements Detector.UastScanner {
                     "the word `lint`. Blah blah blah.\n" +
                     "\n" +
                     "Another paragraph here.\n",
-            Category.CORRECTNESS,
+            Category.A11Y,
             6,
             Severity.WARNING,
             new Implementation(
@@ -46,6 +48,15 @@ public class AMACodeDetector extends Detector implements Detector.UastScanner {
     @Override
     public List<Class<? extends UElement>> getApplicableUastTypes() {
         return Collections.singletonList(ULiteralExpression.class);
+    }
+
+    @Override
+    public void visitClass(JavaContext context, UClass uClass) {
+        //super.visitClass(uClass);
+
+        // If an Android activity is not an AccessibleActivity, give a small warning
+        context.report(ISSUE, uClass, context.getNameLocation(uClass), "Number of supers is " + uClass.getSupers().length);
+
     }
 
     @Override
@@ -59,6 +70,7 @@ public class AMACodeDetector extends Detector implements Detector.UastScanner {
         // Also be aware of context.getJavaEvaluator() which provides a lot of
         // utility functionality.
         return new UElementHandler() {
+
             @Override
             public void visitLiteralExpression(ULiteralExpression expression) {
                 String string = UastLiteralUtils.getValueIfStringLiteral(expression);
@@ -66,11 +78,14 @@ public class AMACodeDetector extends Detector implements Detector.UastScanner {
                     return;
                 }
 
+                System.out.println(string);
+
                 if (string.contains("lint") && string.matches(".*\\blint\\b.*")) {
                     context.report(ISSUE, expression, context.getLocation(expression),
-                            "This code mentions `lint`: **Congratulations**");
+                            "v1111");
                 }
             }
+
         };
     }
 

@@ -105,13 +105,16 @@ public class AccessibleActivity extends AppCompatActivity {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             AccessibleHoverMenuService.AccessibleHoverMenuBinder binder
                     = (AccessibleHoverMenuService.AccessibleHoverMenuBinder) service;
-            menuService = binder.getService();
-            menuBound = true;
-            Log.e("CONNECTION", "Menu connection successful");
 
-            if (menuConnectedListener != null) {
-                menuConnectedListener.configureMenu();
-            }
+            //if (binder != null) {
+                menuService = binder.getService();
+                menuBound = true;
+                Log.e("CONNECTION", "Menu connection successful");
+
+                if (menuConnectedListener != null) {
+                    menuConnectedListener.configureMenu();
+                }
+            //}
 
         }
 
