@@ -67,3 +67,27 @@ task grantTestPermissions {
     }
 }
 
+task downloadAccessibleTestFiles {
+
+    description = "Grabs files from a recent accessible test run"
+
+    AndroidDebugBridge.initIfNeeded(false)
+    def bridge = AndroidDebugBridge.createBridge(android.adbExecutable.path, false)
+    def receiver = CollectingOutputReceiver.newInstance()
+    System.out.println(android.adbExecutable.path)
+
+    doLast {
+        bridge.devices.each {
+            it.executeShellCommand("pull /storage/emulated/0/screenshotNew.png ~/Desktop", receiver)
+            println "Value: ${receiver.getOutput()}"
+        }
+        System.out.println("Granted permissons!!!!")
+    }
+
+}
+
+task download(type: Exec) {
+    def command = [android.adbExecutable.path + ' pull /storage/emulated/0/screenshotNew.png ~/Desktop']
+    commandLine command
+}
+
