@@ -1,9 +1,13 @@
 package io.github.ama_csail.amaexampleapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.ama_csail.ama.AMA;
 import io.github.ama_csail.ama.AccessibleActivity;
 import io.github.ama_csail.ama.menu.OnAccessibleMenuConnectedListener;
 import io.github.ama_csail.ama.menu.OnInstructionsLoadedListener;
@@ -27,7 +30,7 @@ import io.github.ama_csail.amaexampleapp.news.NewsApi;
 public class MainActivity extends AccessibleActivity {
 
     private LinearLayout newsLayout;
-    private Context context;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,7 @@ public class MainActivity extends AccessibleActivity {
 
         new NewsApiTask().execute(this);
 
-        context = this;
+        activity = this;
 
         String test = "this is a lint test";
 
@@ -47,7 +50,7 @@ public class MainActivity extends AccessibleActivity {
 
     protected void configureAccessibility() {
 
-        enableMenu();
+        //enableMenu();
         //enableDyslexiaFont(true);
         //AMA.increaseFontSize(getRootView(), 30);
         //AMA.setActionClass(newsLayout, ActionClass.DANGER);
@@ -65,7 +68,7 @@ public class MainActivity extends AccessibleActivity {
                     @Override
                     public void onInstructionsLoaded(ViewGroup parent, Object config) {
                         parent.removeAllViews();
-                        LayoutInflater.from(context)
+                        LayoutInflater.from(activity)
                                 .inflate(R.layout.main_instruction_layout, parent);
                     }
                 });
@@ -134,6 +137,25 @@ public class MainActivity extends AccessibleActivity {
                 Picasso.with(context)
                         .load(a.getUrlToImage())
                         .into((ImageView) cardContainer.findViewById(R.id.headline_image));
+
+                final Article finalArticle = a;
+                cardContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Uri uri = Uri.parse(finalArticle.getUrl());
+
+                        // create an intent builder
+                        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+
+                        intentBuilder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+
+                        CustomTabsIntent customTabsIntent = intentBuilder.build();
+
+                        customTabsIntent.launchUrl(activity, uri);
+
+                    }
+                });
 
                 newsLayout.addView(cardContainer);
             }

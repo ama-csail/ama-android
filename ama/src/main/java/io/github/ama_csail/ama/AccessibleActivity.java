@@ -29,16 +29,16 @@ public class AccessibleActivity extends AppCompatActivity {
     private OnAccessibleMenuConnectedListener menuConnectedListener;
     private boolean menuBound = false;
 
-    @Override
-    public void startActivity(Intent intent) {
-
-//        String intendedClass = intent.getComponent().getClassName();
-//        AlternativeUIManager.getInstance();
+//    @Override
+//    public void startActivity(Intent intent) {
 //
-//        UserInterface desiredInterface = AlternativeUIManager.transform();
-
-        super.startActivity(intent);
-    }
+////        String intendedClass = intent.getComponent().getClassName();
+////        AlternativeUIManager.getInstance();
+////
+////        UserInterface desiredInterface = AlternativeUIManager.transform();
+//
+//        super.startActivity(intent);
+//    }
 
     @Override
     protected void onResume() {
@@ -57,8 +57,10 @@ public class AccessibleActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        unbindService(menuConnection);
-        menuBound = false;
+        if (menuService != null) {
+            unbindService(menuConnection);
+            menuBound = false;
+        }
     }
 
     @Override

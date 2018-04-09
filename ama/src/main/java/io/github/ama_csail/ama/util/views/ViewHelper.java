@@ -1,5 +1,9 @@
 package io.github.ama_csail.ama.util.views;
 
+import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -91,6 +95,22 @@ public class ViewHelper {
 
         return allStrings;
 
+    }
+
+    public static boolean isVisible(final View view) {
+
+        int height = Resources.getSystem().getDisplayMetrics().heightPixels;
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        if (view == null) {
+            return false;
+        }
+        if (!view.isShown()) {
+            return false;
+        }
+        final Rect actualPosition = new Rect();
+        view.getGlobalVisibleRect(actualPosition);
+        final Rect screen = new Rect(0, 0,height, width);
+        return actualPosition.intersect(screen);
     }
 
 }

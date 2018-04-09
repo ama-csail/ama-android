@@ -12,6 +12,7 @@ import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.Until;
 import android.util.Log;
+import android.view.View;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +20,10 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
+
+import io.github.ama_csail.ama.testing.AppSpecification;
+import io.github.ama_csail.ama.testing.ViewInfoStruct;
+import io.github.ama_csail.ama.util.views.ViewHelper;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
@@ -55,6 +60,9 @@ public class ExampleInstrumentedTest {
 
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
 
+        AppSpecification app = new AppSpecification(BASIC_SAMPLE_PACKAGE);
+        app.addActivity(MainActivity.class);
+
         // Start from the home screen
         //mDevice.pressHome();
 
@@ -81,6 +89,12 @@ public class ExampleInstrumentedTest {
         // we will delete the temporary storage.
 
         Activity activity = activityTestRule.getActivity();
+        View toSearch = activity.getWindow().getDecorView().getRootView();
+        for (View v : ViewHelper.getAllViews(toSearch)) {
+            ViewInfoStruct thisView = new ViewInfoStruct(v);
+            Log.i("VIEW INFO", thisView.toString());
+        }
+
         //ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         //PermissionGranter.allowPermissionsIfNeeded(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         //PermissionGranter.allowPermissionsIfNeeded(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -98,14 +112,6 @@ public class ExampleInstrumentedTest {
         Log.e("Screenshot saved at", screenFile.toString());
 
         mDevice.waitForIdle(5000);
-
-
-        try {
-            mDevice.dumpWindowHierarchy(viewFile);
-            Log.e("FILE", "View file saved");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         assertTrue("App has loaded!", true);
 
