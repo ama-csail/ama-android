@@ -2,6 +2,7 @@ package io.github.ama_csail.amaexampleapp.news;
 
 /**
  * Representation of an article from the News API
+ * You should not need to touch this file for the purposes of the project
  * @author Aaron Vontell
  */
 public class Article {

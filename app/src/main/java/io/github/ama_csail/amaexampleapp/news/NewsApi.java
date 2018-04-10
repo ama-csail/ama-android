@@ -1,33 +1,21 @@
 package io.github.ama_csail.amaexampleapp.news;
 
-import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import io.github.ama_csail.amaexampleapp.R;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 /**
  * Hooks for the News API from newsapi.org
+ * You should not need to touch this file for the purposes of the project
  * @author Aaron Vontell
  */
 public class NewsApi {
 
-    // TODO: Invalidate later
     private static final String API_KEY = "d3f0c5c2b1124f8793c61c57639a5a35";
 
     private static final String HOST = "https://newsapi.org/v1/articles?source=";
