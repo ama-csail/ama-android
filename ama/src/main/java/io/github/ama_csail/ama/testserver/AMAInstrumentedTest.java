@@ -1,4 +1,4 @@
-package io.github.ama_csail.ama.testing;
+package io.github.ama_csail.ama.testserver;
 
 /**
  * Created by vontell on 3/11/18.

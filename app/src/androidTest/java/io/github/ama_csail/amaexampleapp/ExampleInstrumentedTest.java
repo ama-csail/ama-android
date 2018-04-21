@@ -8,6 +8,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import android.support.test.runner.lifecycle.Stage;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
@@ -21,9 +23,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-//import io.github.ama_csail.ama.testing.AppSpecification;
-//import io.github.ama_csail.ama.testing.ViewInfoStruct;
+import io.github.ama_csail.ama.testserver.ViewInfoStruct;
+import io.github.ama_csail.ama.testserver.MobileSocket;
 import io.github.ama_csail.ama.util.views.ViewHelper;
+
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Random;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
@@ -43,6 +53,7 @@ public class ExampleInstrumentedTest {
             = "io.github.ama_csail.amaexampleapp";
     private static final int LAUNCH_TIMEOUT = 5000;
     private static final String STRING_TO_BE_TYPED = "UiAutomator";
+    private Random rand = new Random();
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -58,7 +69,10 @@ public class ExampleInstrumentedTest {
     @Test
     public void testSimple() {
 
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        MobileSocket socket = new MobileSocket("18.111.5.156", 8080);
+        socket.start();
+
+        mDevice = UiDevice.getInstance(getInstrumentation());
 
         //AppSpecification app = new AppSpecification(BASIC_SAMPLE_PACKAGE);
         //app.addActivity(MainActivity.class);
@@ -83,6 +97,9 @@ public class ExampleInstrumentedTest {
         // Wait for the app to appear
         mDevice.wait(Until.hasObject(By.pkg(BASIC_SAMPLE_PACKAGE).depth(0)),
                 LAUNCH_TIMEOUT);
+
+        // Send info that the app has started
+        socket.sendStartInfo(BASIC_SAMPLE_PACKAGE);
 
         // First and foremost, grant external write permissions if not already allowed. This will'
         // allow us to save screenshots and logs with all testing results. Once the tests are finished,
@@ -111,6 +128,11 @@ public class ExampleInstrumentedTest {
 
         try {
 
+            Activity act1 = getActivityInstance();
+            socket.sendNewScreen(act1);
+            evaluateAccessibility(act1, socket);
+            takeScreenshot(act1, socket);
+
             // First scroll down
             UiObject scroll = mDevice.findObject(new UiSelector()
                     .className("android.widget.ScrollView")
@@ -124,6 +146,10 @@ public class ExampleInstrumentedTest {
             about.clickAndWaitForNewWindow();
 
             mDevice.waitForIdle(2000);
+            Activity act2 = getActivityInstance();
+            socket.sendNewScreen(act2);
+            evaluateAccessibility(act2, socket);
+            takeScreenshot(act2, socket);
             mDevice.pressBack();
 
             // First scroll down
@@ -132,14 +158,26 @@ public class ExampleInstrumentedTest {
                     .instance(0));
             scrollAgain.swipeUp(50);
 
+            Activity act3 = getActivityInstance();
+            socket.sendNewScreen(act3);
+            evaluateAccessibility(act3, socket);
+            takeScreenshot(act3, socket);
+
             UiObject article = mDevice.findObject(new UiSelector()
                     .clickable(true)
                     .instance(3));
             article.click();
 
             mDevice.waitForIdle(4000);
+            Activity act4 = getActivityInstance();
+            //Log.e("FOUND ACTIVITY", currentActivity != null ? currentActivity.getLocalClassName() : "Unknown");
+            socket.sendNewScreen(act4);
+            evaluateAccessibility(act4, socket);
+            takeScreenshot(act4, socket);
             mDevice.pressBack();
             mDevice.waitForIdle(2000);
+
+            socket.sendFinishInfo(BASIC_SAMPLE_PACKAGE);
 
 
         } catch (UiObjectNotFoundException e) {
@@ -148,6 +186,57 @@ public class ExampleInstrumentedTest {
 
 
         assertTrue("App has loaded!", true);
+
+    }
+
+    private Activity getActivityInstance(){
+
+        final Activity[] currentActivity = {null};
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            public void run(){
+                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+                Iterator<Activity> it = resumedActivity.iterator();
+                if (it.hasNext()) {
+                    currentActivity[0] = it.next();
+                }
+            }
+        });
+
+        return currentActivity[0];
+    }
+
+    private void evaluateAccessibility(Activity activity, MobileSocket socket) {
+
+        View toSearch = activity.getWindow().getDecorView().getRootView();
+        for (View v : ViewHelper.getAllViews(toSearch)) {
+            ViewInfoStruct thisView = new ViewInfoStruct(v);
+            if (thisView.needsContentDescription()) {
+                socket.sendContentDescriptionMissing(
+                        activity,
+                        thisView.getShortName(),
+                        thisView.getLongName(),
+                        thisView.getId(),
+                        thisView.getUpperLeftBound(),
+                        thisView.getLowerRightBound()
+                );
+            }
+        }
+
+    }
+
+    private void takeScreenshot(Activity activity, MobileSocket socket) {
+
+        // First wait to idle for any changes that are occurring
+        mDevice.waitForIdle(2000);
+
+        // Create a file and save it
+        Date start = new Date();
+        final File screenFile = new File(Environment.getExternalStorageDirectory(), "screen_" + start.toString() + "_" + rand.nextInt());
+        mDevice.takeScreenshot(screenFile, 0.5f, 50);
+
+        // Finally, attempt to send that file over websockets
+        socket.sendScreenshot(screenFile, activity, start);
 
     }
 

@@ -1,7 +1,6 @@
-package io.github.ama_csail.ama.testing;
+package io.github.ama_csail.ama.testserver;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-
-import io.github.ama_csail.ama.util.views.ViewHelper;
 
 /**
  * An object holding basic information about a View or ViewGroup in Android.
@@ -68,7 +65,41 @@ public class ViewInfoStruct {
 
     }
 
-    // hasContentDescription
+    public boolean needsContentDescription() {
+        return contentDescription == null && isImageView;
+    }
+
+    public String getLongName() {
+        return longName;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int[] getUpperLeftBound() {
+        return upperLeftBound;
+    }
+
+    public int[] getLowerRightBound() {
+        return lowerRightBound;
+    }
+
+    public boolean isImageView() {
+        return isImageView;
+    }
+
+    public boolean isTextView() {
+        return isTextView;
+    }
+
+    public boolean isViewGroup() {
+        return isViewGroup;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder();

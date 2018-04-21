@@ -57,7 +57,7 @@ public class AccessibleActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (menuService != null) {
+        if (menuService != null && menuBound) {
             unbindService(menuConnection);
             menuBound = false;
         }

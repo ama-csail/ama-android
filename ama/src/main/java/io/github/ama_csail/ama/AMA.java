@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.TextView;
 
@@ -415,6 +416,16 @@ public class AMA {
     public static ActionClass getActionClass(View view) {
         Object rawResult = view.getTag(R.id.AMA_view_action_class);
         return rawResult != null ? (ActionClass) rawResult : ActionClass.UNSET;
+    }
+
+
+    public static void createNaturalKeyboardNavigation(ViewGroup group) {
+
+        for (int i = 1; i < group.getChildCount(); i++) {
+            group.getChildAt(i - 1).setNextFocusDownId(group.getChildAt(i).getId());
+            group.getChildAt(i).setNextFocusUpId(group.getChildAt(i - 1).getId());
+        }
+
     }
 
 }

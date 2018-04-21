@@ -45,6 +45,7 @@ public class AMAInstrumentedTest {
         appContext = InstrumentationRegistry.getTargetContext();
         packageName = appContext.getPackageName();
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
     }
 
     @Test

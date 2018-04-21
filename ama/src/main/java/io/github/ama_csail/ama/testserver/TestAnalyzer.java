@@ -1,4 +1,4 @@
-package io.github.ama_csail.ama.testing;
+package io.github.ama_csail.ama.testserver;
 
 import java.util.ArrayList;
 import java.util.List;
