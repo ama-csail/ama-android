@@ -1,6 +1,11 @@
-# AMA for Android
+<div align="center">
+  <img height="150px" src="logo.png"><br />
+</div>
 
-This repository contains the AMA library for Android, an open source project devoted to making
+
+----------------------------------------------------------------
+
+This repository contains the Bility library for Android, an open source project devoted to making
 accessibility on mobile applications easier through automation and customization.
 
 Maintained and developed by the Decentralized Information Group at MIT's CSAIL.

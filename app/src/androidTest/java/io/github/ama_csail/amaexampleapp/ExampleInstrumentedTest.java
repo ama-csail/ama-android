@@ -69,7 +69,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void testSimple() {
 
-        MobileSocket socket = new MobileSocket("18.111.5.156", 8080);
+        MobileSocket socket = new MobileSocket("192.168.43.230", 8080);
         socket.start();
 
         mDevice = UiDevice.getInstance(getInstrumentation());
