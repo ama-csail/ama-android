@@ -1,5 +1,6 @@
 package io.github.ama_csail.amaexampleapp.utils;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -108,6 +109,17 @@ public class WCAG2 {
         result.setSuggestion("No suggestion - This may be a custom component, container, or decoration.");
 
         return result;
+
+    }
+
+    public static TestSuiteResult runTestSuiteWCAG2A(Activity activity, AppSpecification app) {
+
+        TestSuiteResult testSuite = new TestSuiteResult(
+                "WCAG 2.0 - Level A Satisfaction",
+                "Runs tests to check if WCAG 2.0 has been satisfied at the A level.",
+                "https://www.w3.org/WAI/WCAG20/quickref/?currentsidebar=%23col_customize&levels=aa%2Caaa");
+
+        return testSuite;
 
     }
 

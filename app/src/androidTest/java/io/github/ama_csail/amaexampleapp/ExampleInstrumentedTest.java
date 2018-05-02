@@ -62,10 +62,10 @@ public class ExampleInstrumentedTest {
                 .setTimeout(5000)
                 .setRuns(3)
                 .setSeed(20182018)
+                .setMaxActions(7)
                 .setTestSuites(TestSuiteType.WCAG2_A)
                 .startupApp()
-                .startTestLoop()
-                .printResults();
+                .startTestLoop();
 
 //        final File screenFile = new File(Environment.getExternalStorageDirectory(), "screenshotTest.png");
 //        final File viewFile = new File(Environment.getExternalStorageDirectory(), "viewFile.xml");

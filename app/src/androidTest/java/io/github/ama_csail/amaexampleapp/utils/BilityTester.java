@@ -9,6 +9,9 @@ import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,7 +27,6 @@ import java.util.List;
 import java.util.Random;
 
 import io.github.ama_csail.ama.testserver.MobileSocket;
-import io.github.ama_csail.ama.testserver.ViewInfoStruct;
 import io.github.ama_csail.ama.util.views.ViewHelper;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -45,9 +47,11 @@ public class BilityTester {
 
     private int LAUNCH_TIMEOUT = 5000;
     private int TEST_RUNS = 1;
+    private int MAX_ACTIONS = 5;
     private List<TestSuiteType> runningSuites;
 
     // RESULTS
+    private int actionCount = 0;
 
     public BilityTester(AppSpecification app, UiDevice uiDevice) {
         this.app = app;
@@ -69,6 +73,11 @@ public class BilityTester {
 
     public BilityTester setRuns(int numRuns) {
         this.TEST_RUNS = numRuns;
+        return this;
+    }
+
+    public BilityTester setMaxActions(int actions) {
+        this.MAX_ACTIONS = actions;
         return this;
     }
 
@@ -115,49 +124,54 @@ public class BilityTester {
 
         uiDevice.waitForIdle();
 
+        printTestSetup();
+
         return this;
 
     }
 
-    public BilityTester startTestLoop() {
-
-        printTestSetup();
+    public void startTestLoop() {
 
         // First, get information about the current screen, and what is shown
+        // If the current activity instance is not good, go back
+        boolean shouldGoBack = false;
         Activity currentActivity = getActivityInstance();
-        View toSearch = currentActivity.getWindow().getDecorView().getRootView();
-        int passCount = 0;
-        int totalCount = 0;
-        List<TestResult> failingTests = new ArrayList<>();
-        List<View> allViews = ViewHelper.getAllViews(toSearch);
-        Log.e("Views", "" + allViews.size());
-        for (View v : allViews) {
-            totalCount++;
-            TestResult res = WCAG2.testPrinciple_1_1_1(v);
-            if (res.isPassed()) {
-                passCount++;
-            } else {
-                failingTests.add(res);
-            }
+        if (currentActivity != null) {
+            evaluateAccessibility(currentActivity);
+        } else {
+            shouldGoBack = true;
         }
 
-        Log.e("Fail count", "" + failingTests.size());
-        Log.e("TEST RESULTS", passCount + "/" + totalCount + " views passed WCAG2 1.1.1");
-        for(TestResult test : failingTests) {
-            Log.e("FAILED", test.toString());
-            System.out.println(test.toString());
-        }
 
-        // If goal state has been reached, terminate the test loop
+        // TODO: If goal state has been reached, terminate the test loop
+        if (actionCount >= MAX_ACTIONS) {
+            return;
+        }
 
         // Then, come up with an estimate for what next action to take
+        UiInputActionType nextAction = !shouldGoBack ? getNextActionType() : UiInputActionType.BACK;
+        UiObject subject = getNextActionSubject(nextAction);
 
-        // Finally, execute that action
+        // If no subject was found for this action, retry
+        if (subject == null) {
 
-        // Call the start loop again
-        //startTestLoop();
+            startTestLoop();
 
-        return this;
+        } else {
+
+            // Finally, execute that action
+            try {
+                Log.e("ACTION", "Performing " + nextAction + " on " + subject.getClassName());
+            } catch (UiObjectNotFoundException e) {
+                e.printStackTrace();
+            }
+            executeNextAction(nextAction, subject);
+
+            // Call the start loop again
+            uiDevice.waitForIdle(2000);
+            startTestLoop();
+
+        }
 
     }
 
@@ -194,26 +208,34 @@ public class BilityTester {
         return currentActivity[0];
     }
 
-    private void evaluateAccessibility(Activity activity, MobileSocket socket) {
+    private void evaluateAccessibility(Activity activity) {
 
         View toSearch = activity.getWindow().getDecorView().getRootView();
-        for (View v : ViewHelper.getAllViews(toSearch)) {
-            ViewInfoStruct thisView = new ViewInfoStruct(v);
-            if (thisView.needsContentDescription()) {
-                socket.sendContentDescriptionMissing(
-                        activity,
-                        thisView.getShortName(),
-                        thisView.getLongName(),
-                        thisView.getId(),
-                        thisView.getUpperLeftBound(),
-                        thisView.getLowerRightBound()
-                );
+        int passCount = 0;
+        int totalCount = 0;
+        List<TestResult> failingTests = new ArrayList<>();
+        List<View> allViews = ViewHelper.getAllViews(toSearch);
+        Log.e("Views", "" + allViews.size());
+        for (View v : allViews) {
+            totalCount++;
+            TestResult res = WCAG2.testPrinciple_1_1_1(v);
+            if (res.isPassed()) {
+                passCount++;
+            } else {
+                failingTests.add(res);
             }
+        }
+
+        Log.e("Fail count", "" + failingTests.size());
+        Log.e("TEST RESULTS", passCount + "/" + totalCount + " views passed WCAG2 1.1.1");
+        for(TestResult test : failingTests) {
+            // Log.e("FAILED", test.toString());
+            System.out.println(test.toString());
         }
 
     }
 
-    private void takeScreenshot(Activity activity, MobileSocket socket) {
+    private void takeScreenshot(Activity activity) {
 
         // First wait to idle for any changes that are occurring
         uiDevice.waitForIdle(2000);
@@ -225,6 +247,103 @@ public class BilityTester {
 
         // Finally, attempt to send that file over websockets
         socket.sendScreenshot(screenFile, activity, start);
+
+    }
+
+    // Randomization
+
+    private static final double CLICK_PROB_BOUND = 0.01;
+    private static final double SWIPE_PROB_BOUND = 0.9;
+    private static final double BACK_PROB_BOUND = 0.90001;
+    private static final double LONGCLICK_PROB = 1.00;
+
+    private UiInputActionType getNextActionType() {
+
+        float probDecider = rand.nextFloat();
+        if (probDecider <= CLICK_PROB_BOUND) {
+            return UiInputActionType.CLICK;
+        } else if (probDecider <= SWIPE_PROB_BOUND) {
+            return UiInputActionType.SWIPE;
+        } else if (probDecider <= BACK_PROB_BOUND) {
+            return UiInputActionType.BACK;
+        } else {
+            return UiInputActionType.LONGCLICK;
+        }
+
+    }
+
+    private UiObject getNextActionSubject(UiInputActionType type) {
+
+        switch (type) {
+            case SWIPE:
+                int scrollBound = uiDevice.findObjects(By.scrollable(true)).size();
+                if (scrollBound <= 0) return null;
+                return uiDevice.findObject(new UiSelector()
+                        .scrollable(true)
+                        .instance(rand.nextInt(scrollBound)));
+            case LONGCLICK:
+                int longBound = uiDevice.findObjects(By.longClickable(true)).size();
+                if (longBound <= 0) return null;
+                return uiDevice.findObject(new UiSelector()
+                        .scrollable(true)
+                        .instance(rand.nextInt(longBound)));
+            default:
+            case CLICK:
+                int clickBound = uiDevice.findObjects(By.clickable(true)).size();
+                if (clickBound <= 0) return null;
+                return uiDevice.findObject(new UiSelector()
+                        .clickable(true)
+                        .instance(rand.nextInt(clickBound)));
+        }
+
+    }
+
+    // TUNABLE PARAMETERS:
+    private static final double SWIPE_DOWN_PROB_BOUND = 0.1;
+    private static final double SWIPE_UP_PROB_BOUND = 0.9;
+    private static final double SWIPE_LEFT_PROB_BOUND = 0.95;
+    private static final double SWIPE_RIGHT_PROB_BOUND = 1.00;
+    private static final int SWIPE_MINIMUM = 50;
+    private static final int SWIPE_MAXIMUM = 150;
+
+    private void executeNextAction(UiInputActionType type, UiObject subject) {
+
+        try {
+            switch (type) {
+                case CLICK:
+                    subject.click();
+                    break;
+                case SWIPE:
+                    float probDecider = rand.nextFloat();
+                    int amount = ((int) Math.floor(rand.nextFloat() * (SWIPE_MAXIMUM - SWIPE_MINIMUM))) + SWIPE_MINIMUM;
+                    if (probDecider <= SWIPE_DOWN_PROB_BOUND) {
+                        subject.swipeDown(amount);
+                        break;
+                    }
+                    if (probDecider <= SWIPE_UP_PROB_BOUND) {
+                        subject.swipeUp(amount);
+                        break;
+                    }
+                    if (probDecider <= SWIPE_LEFT_PROB_BOUND) {
+                        subject.swipeLeft(amount);
+                        break;
+                    }
+                    if (probDecider <= SWIPE_RIGHT_PROB_BOUND) {
+                        subject.swipeRight(amount);
+                        break;
+                    }
+                case LONGCLICK:
+                    subject.longClick();
+                    break;
+                case BACK:
+                    uiDevice.pressBack();
+                    break;
+            }
+            actionCount++;
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
