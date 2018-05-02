@@ -93,6 +93,7 @@ public class WCAG2 {
                 result.setPassed(false);
                 result.setTestError("This ImageView-type view does not have a content description.");
                 result.setSuggestion("Please make sure that this ImageView has a content description.");
+                result.setIdentifier(view.getResources().getResourceName(view.getId()));
                 return result;
 
             } else {

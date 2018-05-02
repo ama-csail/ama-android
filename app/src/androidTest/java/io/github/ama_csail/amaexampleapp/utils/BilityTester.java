@@ -16,14 +16,17 @@ import android.support.test.uiautomator.Until;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import io.github.ama_csail.ama.testserver.MobileSocket;
@@ -208,6 +211,58 @@ public class BilityTester {
         return currentActivity[0];
     }
 
+    /**
+     * Given a list of View's returns a subset of that list representing unique views. For instance,
+     * if a card view with an image, text, and lack of content description shows up more than once,
+     * then only one instance will be included in the resulting step. This is used to shrink
+     * multiple instances of an accessibility violation into one.
+     * The returned map is a collection of views that were combined into one "instance", labeled by
+     * a hash.
+     * @param views The views to sort into unique instances
+     * @return a collection of views that were combined into one "instance", labeled by a hash.
+     */
+    private Map<Integer, List<View>> getStructurallyUniqueSubset(List<View> views) {
+
+        // Here are the rules:
+        //  If the view has an id and has the same context and class, then they are likely the same
+        //  If the view is a ViewGroup and has structural equivalence, then they are likely the same
+        // Hash is determined by the following:
+        //      id of the view
+        //      context of the view
+        //      class of the view
+        //      Flattened child class list if this is a viewgroup
+
+        Log.e("CONDENSE", "Started with num views: " + views.size());
+
+        Map<Integer, List<View>> uniqueGroups = new HashMap<>();
+
+        for (View v : views) {
+
+            StringBuilder identifier = new StringBuilder();
+            if (v.getId() > 0) identifier.append(v.getId());
+            identifier.append(v.getContext().hashCode());
+            identifier.append(v.getClass().getName());
+//            if (v instanceof ViewGroup) {
+//                (ViewGroup) v.getCh
+//            }
+
+            int id = identifier.toString().hashCode();
+            if (uniqueGroups.containsKey(id)) {
+                uniqueGroups.get(id).add(v);
+            } else {
+                List<View> groupedViews = new ArrayList<>();
+                groupedViews.add(v);
+                uniqueGroups.put(id, groupedViews);
+            }
+
+        }
+
+        Log.e("CONDENSE", "Ended with num views: " + uniqueGroups.size());
+
+        return uniqueGroups;
+
+    }
+
     private void evaluateAccessibility(Activity activity) {
 
         View toSearch = activity.getWindow().getDecorView().getRootView();
@@ -215,8 +270,16 @@ public class BilityTester {
         int totalCount = 0;
         List<TestResult> failingTests = new ArrayList<>();
         List<View> allViews = ViewHelper.getAllViews(toSearch);
+
+        Map<Integer, List<View>> groupedUniques = getStructurallyUniqueSubset(allViews);
+        List<View> uniqueViews = new ArrayList<>();
+        for (Integer key : groupedUniques.keySet()) {
+            uniqueViews.add(groupedUniques.get(key).get(0));
+        }
+
         Log.e("Views", "" + allViews.size());
-        for (View v : allViews) {
+        Log.e("Using Unique Views", "" + uniqueViews.size());
+        for (View v : uniqueViews) {
             totalCount++;
             TestResult res = WCAG2.testPrinciple_1_1_1(v);
             if (res.isPassed()) {
@@ -229,7 +292,7 @@ public class BilityTester {
         Log.e("Fail count", "" + failingTests.size());
         Log.e("TEST RESULTS", passCount + "/" + totalCount + " views passed WCAG2 1.1.1");
         for(TestResult test : failingTests) {
-            // Log.e("FAILED", test.toString());
+            Log.e("FAILED", test.toString());
             System.out.println(test.toString());
         }
 

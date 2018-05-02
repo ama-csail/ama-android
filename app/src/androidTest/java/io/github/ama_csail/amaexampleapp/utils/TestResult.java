@@ -59,13 +59,13 @@ public class TestResult {
 
     @Override
     public String toString() {
-        return "TestResult{" +
-                "passed=" + passed +
-                ", testTitle='" + testTitle + '\'' +
-                ", testDescription='" + testDescription + '\'' +
-                ", testError='" + testError + '\'' +
-                ", suggestion='" + suggestion + '\'' +
-                ", identifier='" + identifier + '\'' +
+        return "TestResult{" + "\n" +
+                "\tpassed=" + passed + ",\n" +
+                "\ttestTitle='" + testTitle + '\'' + ",\n" +
+                "\ttestDescription='" + testDescription + '\'' + ",\n" +
+                "\ttestError='" + testError + '\'' + ",\n" +
+                "\tsuggestion='" + suggestion + '\'' + ",\n" +
+                "\tidentifier='" + identifier + '\'' + ",\n" +
                 '}';
     }
 }
